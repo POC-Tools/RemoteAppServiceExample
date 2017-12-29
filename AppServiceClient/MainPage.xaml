@@ -9,9 +9,9 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel Orientation="Vertical" Padding="10">
-            <TextBox Name="ipAddress" Text="{x:Bind RemoteIpAddress}" Header="Remote IP address"/>
+            <TextBox Name="ipAddress" Text="{x:Bind RemoteIpAddress, Mode=TwoWay}" Header="Remote IP address"/>
             <Button Name="requestButton" Content="Request" Click="requestButton_Click" Margin="10"/>
-            <TextBlock Text="{x:Bind Response}" FontSize="24" TextWrapping="WrapWholeWords"/>
+            <TextBlock Text="{x:Bind Response, Mode=TwoWay}" FontSize="24" TextWrapping="WrapWholeWords"/>
         </StackPanel>
     </Grid>
 </Page>

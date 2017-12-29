@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
@@ -22,14 +24,25 @@ using Windows.UI.Xaml.Navigation;
 namespace AppServiceClient
 {
 
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
         public string RemoteIpAddress { get; set; } = "192.168.1.2";
-        public string Response { get; set; }
+        string response;
+        public string Response
+        {
+            get { return response; }
+            set { response = value; NotifyPropertyChanged(); }
+        }
 
         public MainPage()
         {
             this.InitializeComponent();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private async void requestButton_Click(object sender, RoutedEventArgs e)
@@ -38,14 +51,14 @@ namespace AppServiceClient
             {
                 RemoteSystemAccessStatus status = await RemoteSystem.RequestAccessAsync();
                 var sys = await GetDeviceByAddressAsync(RemoteIpAddress);
-                OpenRemoteConnectionAsync(sys);
+                Response = await OpenRemoteConnectionAsync(sys);
             }
         }
 
-        private async void OpenRemoteConnectionAsync(RemoteSystem remotesys)
+        private async Task<string> OpenRemoteConnectionAsync(RemoteSystem remotesys)
         {
             if (remotesys == null)
-                return;
+                return "No remote system";
 
             AppServiceConnection connection = new AppServiceConnection()
             {
@@ -58,8 +71,9 @@ namespace AppServiceClient
             AppServiceConnectionStatus status = await connection.OpenRemoteAsync(connectionRequest);
             //AppServiceConnectionStatus status = await connection.OpenAsync();
             if (status != AppServiceConnectionStatus.Success)
-                return;
-
+            {
+                return status.ToString();
+            }
             ValueSet inputs = new ValueSet();
 
             try
@@ -69,8 +83,9 @@ namespace AppServiceClient
                 if (response.Status == AppServiceResponseStatus.Success)
                 {
                     // Get the data that the service returned:
-                    Response = response.Message["result"] as string;
+                    return response.Message["result"] as string;
                 }
+                return response.Status.ToString();
             }
             catch (Exception ex)
             {

@@ -47,12 +47,11 @@ namespace RemoteService
             try
             {
                 var input = args.Request.Message;
-                //var packageList = await GetPackageListInfo();
-                //var json = JsonConvert.SerializeObject(packageList, Formatting.None);
+
                 var result = new ValueSet();
-                var deviceInfo = new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation();
-                var deviceName = deviceInfo.FriendlyName;
-                result.Add("result", $"Hello from provider on {deviceName}");
+                //var deviceInfo = new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation();
+                //var deviceName = deviceInfo.FriendlyName;
+                result.Add("result", $"Hello from provider");
                 //Debug.WriteLine(json);
                 var response = await args.Request.SendResponseAsync(result); //returns Success, even on the phone-to-desktop scenario
                 Debug.WriteLine($"Send result: {response}");
