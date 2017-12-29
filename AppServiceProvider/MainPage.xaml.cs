@@ -1,30 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
+﻿using System.Linq;
+using Windows.Networking;
+using Windows.Networking.Connectivity;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace AppServiceProvider
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+
     public sealed partial class MainPage : Page
     {
+        public string FamilyName { get; private set; }
+        public string IpAddress { get; private set; }
+
         public MainPage()
         {
             this.InitializeComponent();
+            FamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName;
+            IpAddress = GetLocalIp();
         }
+
+        private string GetLocalIp(HostNameType hostNameType = HostNameType.Ipv4)
+        {
+            var icp = NetworkInformation.GetInternetConnectionProfile();
+            if (icp?.NetworkAdapter == null) return null;
+            var hostname =
+                NetworkInformation.GetHostNames()
+                    .FirstOrDefault(
+                        hn =>
+                            hn.Type == hostNameType &&
+                            hn.IPInformation?.NetworkAdapter != null &&
+                            hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId);
+            return hostname?.CanonicalName;
+        }
+
     }
 }

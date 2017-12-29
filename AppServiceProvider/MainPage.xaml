@@ -8,6 +8,10 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Info:" FontSize="24" Margin="10" />
+            <TextBox Text="{x:Bind FamilyName}" IsReadOnly="True" Margin="10" FontSize="24" TextWrapping="Wrap" />
+            <TextBox Text="{x:Bind IpAddress}" IsReadOnly="True" Margin="10" FontSize="24" TextWrapping="Wrap" />
+        </StackPanel>
     </Grid>
 </Page>
