@@ -1,8 +1,10 @@
+
 # RemoteAppServiceExample
 Example app of hosting an AppService on a remote machine.
 
 #Things to remember:
-Provider project:
+
+    Provider project:
 	Package.appxmanifest:
 		tab Capabilities:
 			Add capability "remoteSystem"
@@ -17,9 +19,9 @@ Provider project:
 	
 	Add reference to Service project!
 
-Service project is a Windows Component project type.
+    Service project is a Windows Component project type.
 
-Client project
+    Client project
 	Package.appxmanifest:
 		tab Capabilities:
 			Add capability "remoteSystem"
