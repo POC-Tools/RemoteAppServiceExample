@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 
 namespace RemoteService
 {
-    public sealed class RemoteService:IBackgroundTask
+
+    public sealed class RemoteService : IBackgroundTask
     {
         BackgroundTaskDeferral serviceDeferral;
         AppServiceConnection connection;
@@ -19,7 +16,7 @@ namespace RemoteService
         {
             try
             {
-                serviceDeferral = taskInstance.GetDeferral();
+                serviceDeferral = taskInstance.GetDeferral(); // Get a deferral so that the service isn't terminated.
                 taskInstance.Canceled += OnTaskCanceled;
                 var details = taskInstance.TriggerDetails as AppServiceTriggerDetails;
                 if (details.Name == "com.poctools.remoteservice")
@@ -48,12 +45,10 @@ namespace RemoteService
             {
                 var input = args.Request.Message;
 
-                var result = new ValueSet();
-                //var deviceInfo = new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation();
-                //var deviceName = deviceInfo.FriendlyName;
-                result.Add("result", $"Hello from provider");
-                //Debug.WriteLine(json);
-                var response = await args.Request.SendResponseAsync(result); //returns Success, even on the phone-to-desktop scenario
+                var result = new ValueSet(); //key/value pair for the result, key is used on the client
+                var deviceInfo = new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation();
+                result.Add("result", $"Hello from provider on {deviceInfo.FriendlyName}");
+                var response = await args.Request.SendResponseAsync(result);
                 Debug.WriteLine($"Send result: {response}");
             }
             catch (Exception ex)
@@ -74,7 +69,7 @@ namespace RemoteService
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
             Debug.WriteLine($"Task cancelled: {reason}");
-                  
+
             if (serviceDeferral != null)
             {
                 serviceDeferral.Complete();
